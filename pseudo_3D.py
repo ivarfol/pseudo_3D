@@ -1,8 +1,10 @@
 from platform import system
-from colorama import init
-init()
+from platform import release
 if system() == "Windows":
     from msvcrt import getch
+    if release() == "10":
+        from colorama import init
+        init()
 else:
     import termios, fcntl, sys, os, time
 

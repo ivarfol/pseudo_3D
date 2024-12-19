@@ -175,8 +175,8 @@ def main():
                "#    #   #",
                "#        #",
                "##########"]
-    print("\n\n\n")
-    visual(direction, map_arr, location)
+    #print("\n\n\n")
+    #visual(direction, map_arr, location)
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":

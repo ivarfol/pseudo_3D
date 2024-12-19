@@ -91,11 +91,11 @@ def deg_ch(direc, rot):
     else:
         return(direc + rot)
 
-def raycast(direction, map_arr, step, location):
+def raycast(direction, map_arr, step, location, length):
     hit = []
     angle = deg_ch(direction, -45)
     mov = 0
-    for _ in range(160):
+    for _ in range(length):
         mov = 0.1
         for _ in range(100):
             if map_arr[ceil(location[0] + mov * sin(angle))][ceil(location[1] + mov * cos(angle))] == "#":
@@ -137,19 +137,20 @@ def line(dist, h):
     #print("line", len(stripe))
     return(stripe)
 
-def print_view(out, h):
+def print_view(out, h, length):
     for j in range(h):
-        for i in range(160):
+        for i in range(length):
             print(out[i][j], end="")
         print()
 
 def visual(direction, map_arr, location):
     h = 48
+    length = 160
     step = 0.01
-    hit = raycast(direction, map_arr, step, location)
+    hit = raycast(direction, map_arr, step, location, length)
     out = []
     angle = deg_ch(direction, -45)
-    for _ in range(160):
+    for _ in range(length):
         flag = True
         for ray in hit:
             if angle == ray[0]:
@@ -159,7 +160,7 @@ def visual(direction, map_arr, location):
         if flag:
             out.append(" " * int(h / 2) + "::" * int(h / 2))
         angle = deg_ch(angle, step)
-    print_view(out, h)
+    print_view(out, h, length)
 
 def main():
     location = [1, 1]

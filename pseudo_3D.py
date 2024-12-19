@@ -109,8 +109,7 @@ def raycast(direction, map_arr, step, location):
     #print(hit)
     return(hit)
 
-def line(dist):
-    h = 48
+def line(dist, h):
     if dist != 0:
         start = h /2 * (1 - 1 / dist)
     else:
@@ -121,7 +120,7 @@ def line(dist):
     if end > h:
         end = h - 1
     stripe = ""
-    for i in range(0, 48):
+    for i in range(h):
         if i < start or i > end:
             stripe += " "
         else:
@@ -136,13 +135,14 @@ def line(dist):
     #print("line", len(stripe))
     return(stripe)
 
-def print_view(out):
-    for j in range(48):
+def print_view(out, h):
+    for j in range(h):
         for i in range(160):
             print(out[i][j], end="")
         print()
 
 def visual(direction, map_arr, location):
+    h = 48
     step = 0.01
     hit = raycast(direction, map_arr, step, location)
     out = []
@@ -153,11 +153,11 @@ def visual(direction, map_arr, location):
             if angle == ray[0]:
                 flag = False
                 #print(ray[0], angle)
-                out.append(line(ray[1]))
+                out.append(line(ray[1], h))
         if flag:
             out.append("                                                ")
         angle = deg_ch(angle, step)
-    print_view(out)
+    print_view(out, h)
 
 def main():
     location = [1, 1]
@@ -172,12 +172,12 @@ def main():
                "#    #   #",
                "#        #",
                "##########"]
-    #print("\n\n\n")
+    print("\n\n\n")
     visual(direction, map_arr, location)
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
-        print("direction", direction)
+        #print("direction", direction)
         if symb == b"w" or symb == "w":
             location = move(map_arr, location, direction, 0)
             visual(direction, map_arr, location)

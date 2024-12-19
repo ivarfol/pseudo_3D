@@ -121,8 +121,10 @@ def line(dist, h):
         end = h - 1
     stripe = ""
     for i in range(h):
-        if i < start or i > end:
+        if i < start:
             stripe += " "
+        elif i > end:
+            stripe += "::"
         else:
             if dist < 2:
                 stripe += "█" # ░ ▒ ▓ █
@@ -155,7 +157,7 @@ def visual(direction, map_arr, location):
                 #print(ray[0], angle)
                 out.append(line(ray[1], h))
         if flag:
-            out.append("                                                ")
+            out.append(" " * int(h / 2) + "::" * int(h / 2))
         angle = deg_ch(angle, step)
     print_view(out, h)
 

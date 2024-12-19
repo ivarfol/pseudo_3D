@@ -17,30 +17,31 @@ def print_map(map_arr, loc):
         print(line)
     print(f"\033[s\033[H\033[{round(loc[0])+1}B\033[{round(loc[1])}C@\033[u")
 
-#def move(map_arr, loc, direction):
-#    tmp = []
-#    tmp.extend(loc)
-#    tmp[0] += 0.25 * sin(direction)
-#    tmp[1] += 0.25 * cos(direction)
-#    if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
-#        return(tmp)
-#    else:
-#        return(loc)
-def move(map_arr, loc, key):
+def move(map_arr, loc, direction, rot):
     tmp = []
     tmp.extend(loc)
-    if key == "w":
-        tmp[0] -= 1
-    elif key == "s":
-        tmp[0] += 1
-    elif key == "a":
-        tmp[1] -= 1
-    elif key == "d":
-        tmp[1] += 1
-    if map_arr[tmp[0]][tmp[1]] != "#":
+    direction = deg_ch(direction, rot)
+    tmp[0] += 0.25 * sin(direction)
+    tmp[1] += 0.25 * cos(direction)
+    if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
         return(tmp)
     else:
         return(loc)
+#def move(map_arr, loc, key):
+#    tmp = []
+#    tmp.extend(loc)
+#    if key == "w":
+#        tmp[0] -= 1
+#    elif key == "s":
+#        tmp[0] += 1
+#    elif key == "a":
+#        tmp[1] -= 1
+#    elif key == "d":
+#        tmp[1] += 1
+#    if map_arr[tmp[0]][tmp[1]] != "#":
+#        return(tmp)
+#    else:
+#        return(loc)
 
 def linux_get_ch():
     '''                                                                         
@@ -82,30 +83,30 @@ def read_ch():
     else:
         return(linux_get_ch())
 
-def deg_ch(direc):
-    if direc > 360:
-        return(0)
-    elif direc < 0:
-        return(360)
+def deg_ch(direc, rot):
+    if direc + rot > 37.6:
+        return(direc + rot - 37.6)
+    elif direc + rot < 0:
+        return(37.6 + direc + rot)
     else:
-        return(direc)
+        return(direc + rot)
 
 def raycast(direction, map_arr, step, location):
     hit = []
-    angle = deg_ch(direction - 45)
+    angle = deg_ch(direction, -45)
     mov = 0
-    for _ in range(180):
+    for _ in range(160):
         mov = 0.1
         for _ in range(100):
             if map_arr[ceil(location[0] + mov * sin(angle))][ceil(location[1] + mov * cos(angle))] == "#":
-                print("ceil", ceil(location[0] + mov * sin(angle)), ceil(location[1] + mov * cos(angle)))
-                print("cord", angle, mov)
+                #print("ceil", ceil(location[0] + mov * sin(angle)), ceil(location[1] + mov * cos(angle)))
+                #print("cord", angle, mov)
                 hit.append([angle, mov])
                 break
             mov += 0.1
-        angle = deg_ch(angle + step)
-    print("hits", len(hit))
-    print(hit)
+        angle = deg_ch(angle, step)
+    #print("hits", len(hit))
+    #print(hit)
     return(hit)
 
 def line(dist):
@@ -124,69 +125,81 @@ def line(dist):
         if i < start or i > end:
             stripe += " "
         else:
-            stripe += "█"
-    print("line", len(stripe))
+            if dist < 2:
+                stripe += "█" # ░ ▒ ▓ █
+            elif dist < 4:
+                stripe += "▓" # ░ ▒ ▓ █
+            elif dist < 6:
+                stripe += "▒" # ░ ▒ ▓ █
+            else:
+                stripe += "░" # ░ ▒ ▓ █
+    #print("line", len(stripe))
     return(stripe)
 
 def print_view(out):
     for j in range(48):
-        for i in range(len(out)):
+        for i in range(160):
             print(out[i][j], end="")
         print()
 
 def visual(direction, map_arr, location):
-    step = 0.25
+    step = 0.01
     hit = raycast(direction, map_arr, step, location)
     out = []
-    angle = deg_ch(direction - 45)
-    for _ in range(180):
+    angle = deg_ch(direction, -45)
+    for _ in range(160):
+        flag = True
         for ray in hit:
             if angle == ray[0]:
-                print(ray[1])
+                flag = False
+                #print(ray[0], angle)
                 out.append(line(ray[1]))
-        angle = deg_ch(angle + step)
+        if flag:
+            out.append("                                                ")
+        angle = deg_ch(angle, step)
     print_view(out)
 
 def main():
     location = [1, 1]
-    direction = 0
-    map_arr = ["#########",
-               "#       #",
-               "#       #",
-               "#       #",
-               "#       #",
-               "#       #",
-               "#       #",
-               "#       #",
-               "#       #",
-               "#########"]
+    direction = 1
+    map_arr = ["##########",
+               "#        #",
+               "#        #",
+               "#  ##    #",
+               "#   #    #",
+               "#        #",
+               "# #      #",
+               "#    #   #",
+               "#        #",
+               "##########"]
+    #print("\n\n\n")
     visual(direction, map_arr, location)
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
         print("direction", direction)
         if symb == b"w" or symb == "w":
-            location = move(map_arr, location, "w")
+            location = move(map_arr, location, direction, 0)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"s" or symb == "s":
-            location = move(map_arr, location, "s")
+            location = move(map_arr, location, direction, 9.4)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"a" or symb == "a":
-            location = move(map_arr, location, "a")
+            location = move(map_arr, location, direction, 4.7)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"d" or symb == "d":
-            location = move(map_arr, location, "d")
+            location = move(map_arr, location, direction, 14.1)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"q" or symb == "q":
-            direction = deg_ch(direction + 1)
+            direction = deg_ch(direction, -0.1)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"e" or symb == "e":
-            direction = deg_ch(direction - 1)
+            direction = deg_ch(direction, 0.1) # 52.4 - 90 - full rotation
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         symb = read_ch()

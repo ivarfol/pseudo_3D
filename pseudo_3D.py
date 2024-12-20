@@ -3,6 +3,7 @@ from platform import release
 from math import sin
 from math import cos
 from math import ceil
+from math import pi
 if system() == "Windows":
     from msvcrt import getch
     if release() == "10":
@@ -21,8 +22,9 @@ def move(map_arr, loc, direction, rot):
     tmp = []
     tmp.extend(loc)
     direction = deg_ch(direction, rot)
-    tmp[0] += 0.25 * sin(direction)
-    tmp[1] += 0.25 * cos(direction)
+    #print(sin(direction), cos(direction), direction)
+    tmp[0] += 0.25 * sin(direction * pi)
+    tmp[1] += 0.25 * cos(direction * pi)
     if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
         return(tmp)
     else:
@@ -84,21 +86,21 @@ def read_ch():
         return(linux_get_ch())
 
 def deg_ch(direc, rot):
-    if direc + rot > 37.6:
-        return(direc + rot - 37.6)
+    if direc + rot > 2:
+        return(direc + rot - 2)
     elif direc + rot < 0:
-        return(37.6 + direc + rot)
+        return(2 + direc + rot)
     else:
         return(direc + rot)
 
-def raycast(direction, map_arr, step, location, length):
+def raycast(direction, map_arr, step, location, length, shift):
     hit = []
-    angle = deg_ch(direction, -45)
+    angle = deg_ch(direction, shift)
     mov = 0
     for _ in range(length):
         mov = 0.1
         for _ in range(100):
-            if map_arr[ceil(location[0] + mov * sin(angle))][ceil(location[1] + mov * cos(angle))] == "#":
+            if map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))] == "#":
                 #print("ceil", ceil(location[0] + mov * sin(angle)), ceil(location[1] + mov * cos(angle)))
                 #print("cord", angle, mov)
                 hit.append([angle, mov])
@@ -145,11 +147,12 @@ def print_view(out, h, length):
 
 def visual(direction, map_arr, location):
     h = 48
-    length = 160
-    step = 0.01
-    hit = raycast(direction, map_arr, step, location, length)
+    length = 200
+    step = 0.0025
+    shift = -0.25
+    hit = raycast(direction, map_arr, step, location, length, shift)
     out = []
-    angle = deg_ch(direction, -45)
+    angle = deg_ch(direction, shift)
     for _ in range(length):
         flag = True
         for ray in hit:
@@ -164,7 +167,7 @@ def visual(direction, map_arr, location):
 
 def main():
     location = [1, 1]
-    direction = 1
+    direction = 0
     map_arr = ["##########",
                "#        #",
                "#        #",
@@ -180,29 +183,29 @@ def main():
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
-        #print("direction", direction)
+        print("direction", direction)
         if symb == b"w" or symb == "w":
             location = move(map_arr, location, direction, 0)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"s" or symb == "s":
-            location = move(map_arr, location, direction, 9.4)
+            location = move(map_arr, location, direction, 1)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"a" or symb == "a":
-            location = move(map_arr, location, direction, 4.7)
+            location = move(map_arr, location, direction, 1.5)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"d" or symb == "d":
-            location = move(map_arr, location, direction, 14.1)
+            location = move(map_arr, location, direction, 0.5)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"q" or symb == "q":
-            direction = deg_ch(direction, -0.1)
+            direction = deg_ch(direction, -0.05)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"e" or symb == "e":
-            direction = deg_ch(direction, 0.1) # 52.4 - 90 - full rotation
+            direction = deg_ch(direction, 0.05) # 52.4 - 90 - full rotation
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         symb = read_ch()

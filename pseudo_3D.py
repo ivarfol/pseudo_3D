@@ -126,8 +126,8 @@ def print_view(out, h, length):
 
 def visual(direction, map_arr, location):
     h = 48
-    length = 200 # length * step must be equal to desired view angle in radians
-    step = 0.0025
+    length = 160 # length * step must be equal to desired view angle in radians
+    step = 0.003125
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
     out = []

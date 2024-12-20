@@ -22,28 +22,12 @@ def move(map_arr, loc, direction, rot):
     tmp = []
     tmp.extend(loc)
     direction = deg_ch(direction, rot)
-    #print(sin(direction), cos(direction), direction)
     tmp[0] += 0.25 * sin(direction * pi)
     tmp[1] += 0.25 * cos(direction * pi)
     if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
         return(tmp)
     else:
         return(loc)
-#def move(map_arr, loc, key):
-#    tmp = []
-#    tmp.extend(loc)
-#    if key == "w":
-#        tmp[0] -= 1
-#    elif key == "s":
-#        tmp[0] += 1
-#    elif key == "a":
-#        tmp[1] -= 1
-#    elif key == "d":
-#        tmp[1] += 1
-#    if map_arr[tmp[0]][tmp[1]] != "#":
-#        return(tmp)
-#    else:
-#        return(loc)
 
 def linux_get_ch():
     '''                                                                         
@@ -101,14 +85,10 @@ def raycast(direction, map_arr, step, location, length, shift):
         mov = 0.1
         for _ in range(100):
             if map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))] == "#":
-                #print("ceil", ceil(location[0] + mov * sin(angle)), ceil(location[1] + mov * cos(angle)))
-                #print("cord", angle, mov)
                 hit.append([angle, mov])
                 break
             mov += 0.1
         angle = deg_ch(angle, step)
-    #print("hits", len(hit))
-    #print(hit)
     return(hit)
 
 def line(dist, h):
@@ -136,7 +116,6 @@ def line(dist, h):
                 stripe += "▒" # ░ ▒ ▓ █
             else:
                 stripe += "░" # ░ ▒ ▓ █
-    #print("line", len(stripe))
     return(stripe)
 
 def print_view(out, h, length):
@@ -158,7 +137,6 @@ def visual(direction, map_arr, location):
         for ray in hit:
             if angle == ray[0]:
                 flag = False
-                #print(ray[0], angle)
                 out.append(line(ray[1], h))
         if flag:
             out.append(" " * int(h / 2) + "::" * int(h / 2))
@@ -178,8 +156,6 @@ def main():
                "#    #   #",
                "#        #",
                "##########"]
-    #print("\n\n\n")
-    #visual(direction, map_arr, location)
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
@@ -205,7 +181,7 @@ def main():
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"e" or symb == "e":
-            direction = deg_ch(direction, 0.05) # 52.4 - 90 - full rotation
+            direction = deg_ch(direction, 0.05)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         symb = read_ch()

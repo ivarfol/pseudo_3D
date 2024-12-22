@@ -133,7 +133,7 @@ def visual(direction, map_arr, location):
     h = 48
     length = 80 # length * step must be equal to desired view angle in radians
     step = 0.02
-    shift = -0.8 # must be equal to - <desired view angle> / 2
+    shift = 0.8 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
     position = []
     position.extend(location)

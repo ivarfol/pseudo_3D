@@ -79,24 +79,29 @@ def deg_ch(direc, rot):
 
 def raycast(direction, map_arr, step, location, length, shift):
     hit = []
-    angle = deg_ch(direction, shift)
+    position = []
+    position.extend(location)
+    position[0] += shift * sin(deg_ch(direction, 1.5) * pi)
+    position[1] += shift * cos(deg_ch(direction, 1.5) * pi)
     mov = 0
     for _ in range(length):
         mov = 0.1
         for _ in range(100):
-            if map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))] == "#":
-                hit.append([angle, mov])
+            if map_arr[ceil(position[0] + mov * sin(direction * pi))][ceil(position[1] + mov * cos(direction * pi))] == "#":
+                hit.append([position, mov])
                 break
             mov += 0.1
-        angle = deg_ch(angle, step)
+        position[0] += step * sin(deg_ch(direction, 0.5) * pi)
+        position[1] += step * cos(deg_ch(direction, 0.5) * pi)
     return(hit)
 
 def line(dist, h):
     if dist != 0:
         start = h /2 * (1 - 1 / dist)
+        end = h / 2 * (1 + 1 / dist)
     else:
         start = 0
-    end = h / 2 * (1 + 1 / dist)
+        end = h - 1
     if start < 0:
         start = 0
     if end > h:
@@ -126,21 +131,26 @@ def print_view(out, h, length):
 
 def visual(direction, map_arr, location):
     h = 48
-    length = 160 # length * step must be equal to desired view angle in radians
-    step = 0.003125
-    shift = -0.25 # must be equal to - <desired view angle> / 2
+    length = 80 # length * step must be equal to desired view angle in radians
+    step = 0.02
+    shift = -0.8 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
+    position = []
+    position.extend(location)
+    position[0] += shift * sin(deg_ch(direction, 1.5) * pi)
+    position[1] += shift * cos(deg_ch(direction, 1.5) * pi)
     out = []
-    angle = deg_ch(direction, shift)
     for _ in range(length):
-        flag = True
+        #flag = True
         for ray in hit:
-            if angle == ray[0]:
-                flag = False
-                out.append(line(ray[1], h))
-        if flag:
-            out.append(" " * int(h / 2) + "::" * int(h / 2))
-        angle = deg_ch(angle, step)
+            #print(position, ray[0])
+          #  if position == ray[0]:
+           #     flag = False
+            out.append(line(ray[1], h))
+        position[0] += step * sin(deg_ch(direction, 0.5) * pi)
+        position[1] += step * cos(deg_ch(direction, 0.5) * pi)
+        #if flag:
+         #   out.append(" " * int(h / 2) + "::" * int(h / 2))
     print_view(out, h, length)
 
 def main():

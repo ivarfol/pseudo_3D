@@ -7,7 +7,7 @@ the walls.
 The program uses ascii escape codes for cursor control.  
 ## Modifying
 If the game looks like this:  
-``
+```
 ##########██████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓                             
 #@       #                        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓███████████████████████ 
 #        #██████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒                       
@@ -36,7 +36,7 @@ If the game looks like this:
 :::::::::::::::::::::::::::::::::::::::▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓███████████████████████  
 ████████████████████████▓▓▓▓▓▓▓▓▓▓▓:::::::::::::::::::::::::::::::::::::::::::::  
 ::::::::::::::::::::::::::::::::::::::::::::::▓▓▓▓▓▓▓▓▓▓▓███████████████████████  
-``
+```
 This is caused by a low horizontal resolution in symbols  
 It can be fixed by editing values in the visual() function  
 h - is the hight of the screen in symbols  

@@ -1,16 +1,16 @@
-from platform import system
-from platform import release
-from math import sin
-from math import cos
-from math import ceil
-from math import pi
-if system() == "Windows":
-    from msvcrt import getch
-    if release() == "10":
-        from colorama import init
-        init()
-else:
-    import termios, fcntl, sys, os, time
+try:
+    from platform import system, release
+    from math import sin, cos, ceil, pi
+    if system() == "Windows":
+        from msvcrt import getch
+        if release() == "10":
+            from colorama import init
+            init()
+    else:
+        import termios, fcntl, sys, os, time
+except ImportError:
+    print("Could not import necessary modules")
+    raise ImportError
 
 def print_map(map_arr, loc):
     print("\033[H", end="") # add end="" to start at the top of the screen

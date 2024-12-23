@@ -16,7 +16,7 @@ def print_map(map_arr, loc):
     print("\033[H", end="") # add end="" to start at the top of the screen
     for line in map_arr:
         print(line)
-    print(f"\033[H\033[{round(loc[0])+1}B\033[{round(loc[1])}C@\033[H\033[{len(map_arr)}B")
+    print(f"\033[H\033[{round(loc[0])}B\033[{round(loc[1])}C@\033[H\033[{len(map_arr)}B")
 
 def move(map_arr, loc, direction, rot):
     tmp = []

@@ -13,10 +13,10 @@ else:
     import termios, fcntl, sys, os, time
 
 def print_map(map_arr, loc):
-    print("\033[H") # add end="" to start at the top of the screen
+    print("\033[H", end="") # add end="" to start at the top of the screen
     for line in map_arr:
         print(line)
-    print(f"\033[s\033[H\033[{round(loc[0])+1}B\033[{round(loc[1])}C@\033[u")
+    print(f"\033[H\033[{round(loc[0])+1}B\033[{round(loc[1])}C@\033[H")
 
 def move(map_arr, loc, direction, rot):
     tmp = []
@@ -119,13 +119,15 @@ def line(dist, h):
     return(stripe)
 
 def print_view(out, h, length):
+    print("\033[A", end="")
     for j in range(h):
         for i in range(length):
             print(out[i][j], end="")
         print()
+    print("\033[s")
 
 def visual(direction, map_arr, location):
-    h = 48
+    h = 38
     length = 160 # length * step must be equal to desired view angle in radians
     step = 0.003125
     shift = -0.25 # must be equal to - <desired view angle> / 2
@@ -156,10 +158,11 @@ def main():
                "#    #   #",
                "#        #",
                "##########"]
+    print("\033[H\033[0J")
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
-        print("direction", direction)
+        #print("direction", direction)
         if symb == b"w" or symb == "w":
             location = move(map_arr, location, direction, 0)
             visual(direction, map_arr, location)
@@ -185,6 +188,7 @@ def main():
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         symb = read_ch()
+    print("\033[u", end="")
 
 if __name__ == "__main__":
     main()

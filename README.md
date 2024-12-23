@@ -124,7 +124,7 @@ To output the map over the picture, this would look like this:
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
 ```
-Be warned, this coases flickering on the minimap when moving  
+Be warned, this causes flickering on the minimap when moving  
 ## Controls
 wasd - move forward, left, back or right  
 qe - rotate camera left or right  

@@ -1,9 +1,9 @@
 # Pseudo 3D
 ## Overview
 This is a raycasting implimentation written in python.  
-It outputs the level as a combination of the following symbols without quotes  
-" ░▒▓█:" the ":" is used for floor, and the rest for different distances to  
-the walls.  
+It outputs the level as a combination of the following symbols `` ░▒▓█:``  
+the ``:`` is used for floor, and the rest are used for representing  
+different distances to the walls.  
 The program uses ascii escape codes for cursor control.  
 ## Modifying
 If the game looks like this:  

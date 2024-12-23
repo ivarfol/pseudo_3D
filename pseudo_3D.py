@@ -159,6 +159,7 @@ def main():
                "#        #",
                "##########"]
     print("\033[H\033[0J")
+    visual(direction, map_arr, location)
     print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":

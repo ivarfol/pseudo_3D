@@ -8,7 +8,7 @@ try:
             from colorama import init
             init()
     else:
-        import termios, fcntl, sys, os, time
+        import tty, termios, fcntl, sys, os, time
 except ImportError:
     print("Could not import necessary modules")
     raise ImportError
@@ -59,26 +59,13 @@ def linux_get_ch():
     None.
     '''
     fd = sys.stdin.fileno()
-
-    oldterm = termios.tcgetattr(fd)
-    newattr = termios.tcgetattr(fd)
-    newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
-    termios.tcsetattr(fd, termios.TCSANOW, newattr)
-
-    oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
-    fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
-
+    old_settings = termios.tcgetattr(fd)
     try:
-        while True:
-            time.sleep(0.05)
-            try:
-                c = sys.stdin.read(1)
-                if c:
-                    return c
-            except IOError: pass
+        tty.setraw(fd)
+        ch = sys.stdin.read(1)
     finally:
-        termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
-        fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 def read_ch():
     '''

@@ -21,7 +21,7 @@ def print_map(map_arr, loc):
 def move(map_arr, loc, direction, rot):
     tmp = []
     tmp.extend(loc)
-    direction = deg_ch(direction, rot)
+    direction = rad_ch(direction, rot)
     tmp[0] += 0.25 * sin(direction * pi)
     tmp[1] += 0.25 * cos(direction * pi)
     if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
@@ -69,7 +69,7 @@ def read_ch():
     else:
         return(linux_get_ch())
 
-def deg_ch(direc, rot):
+def rad_ch(direc, rot):
     if direc + rot > 2:
         return(direc + rot - 2)
     elif direc + rot < 0:
@@ -79,7 +79,7 @@ def deg_ch(direc, rot):
 
 def raycast(direction, map_arr, step, location, length, shift):
     hit = []
-    angle = deg_ch(direction, shift)
+    angle = rad_ch(direction, shift)
     mov = 0
     for _ in range(length):
         mov = 0.1
@@ -88,7 +88,7 @@ def raycast(direction, map_arr, step, location, length, shift):
                 hit.append([angle, mov])
                 break
             mov += 0.1
-        angle = deg_ch(angle, step)
+        angle = rad_ch(angle, step)
     return(hit)
 
 def line(dist, h):
@@ -133,7 +133,7 @@ def visual(direction, map_arr, location):
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
     out = []
-    angle = deg_ch(direction, shift)
+    angle = rad_ch(direction, shift)
     for _ in range(length):
         flag = True
         for ray in hit:
@@ -142,7 +142,7 @@ def visual(direction, map_arr, location):
                 out.append(line(ray[1], h))
         if flag:
             out.append(" " * int(h / 2) + "::" * int(h / 2))
-        angle = deg_ch(angle, step)
+        angle = rad_ch(angle, step)
     print_view(out, h, length)
 
 def main():
@@ -181,11 +181,11 @@ def main():
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"q" or symb == "q":
-            direction = deg_ch(direction, -0.05)
+            direction = rad_ch(direction, -0.05)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         elif symb == b"e" or symb == "e":
-            direction = deg_ch(direction, 0.05)
+            direction = rad_ch(direction, 0.05)
             visual(direction, map_arr, location)
             print_map(map_arr, location)
         symb = read_ch()

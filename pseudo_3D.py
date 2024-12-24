@@ -8,7 +8,7 @@ try:
             from colorama import init
             init()
     else:
-        import tty, termios, fcntl, sys, os, time
+        import tty, termios, sys
 except ImportError:
     print("Could not import necessary modules")
     raise ImportError

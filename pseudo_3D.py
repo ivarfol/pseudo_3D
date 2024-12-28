@@ -167,10 +167,11 @@ def line(dist, h):
         a column of the future output
     '''
     if dist != 0:
-        start = h /2 * (1 - 1 / dist)
+        start = h / 2 * (1 - 1 / dist)
+        end = h / 2 * (1 + 1 / dist)
     else:
         start = 0
-    end = h / 2 * (1 + 1 / dist)
+        end = h - 1
     if start < 0:
         start = 0
     if end > h:

@@ -171,7 +171,7 @@ def line(dist, h):
     Parameters
     ----------
     dist : float
-        distance from the hit list in visual()
+        perpendicular distance to the point a ray stopped at
     h : int
         hight of the output in symbols
 

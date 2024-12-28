@@ -223,12 +223,13 @@ def print_view(out, h, length):
     -------
     None.
     '''
-    print("\033[A", end="")
+    output = "\033[A"
     for j in range(h):
         for i in range(length):
-            print(out[i][j], end="")
-        print()
-    print("\033[s")
+            output += out[i][j]
+        output += "\n"
+    output += "\033[s"
+    print(output)
 
 def visual(direction, map_arr, location):
     '''

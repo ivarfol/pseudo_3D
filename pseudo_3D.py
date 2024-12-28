@@ -29,10 +29,12 @@ def print_map(map_arr, loc):
     -------
     new player location (tmp) after moving if it does not clip into a wall
     '''
-    print("\033[H", end="") # add end="" to start at the top of the screen
+    output = "\033[H"
     for line in map_arr:
-        print(line)
-    print(f"\033[H\033[{round(loc[0])}B\033[{round(loc[1])}C@\033[H\033[{len(map_arr)}B")
+        output += line
+        output += "\n"
+    output += f"\033[H\033[{round(loc[0])}B\033[{round(loc[1])}C@\033[H\033[{len(map_arr)}B"
+    print(output)
 
 def move(map_arr, loc, direction, rot):
     '''

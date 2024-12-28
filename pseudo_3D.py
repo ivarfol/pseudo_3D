@@ -212,9 +212,9 @@ def print_view(out, h, length, map_arr, direction, location):
     for line_num in range(len(map_arr)):
         output += map_arr[line_num]
         if line_num == 0:
-            output += f" direction: {direction}                  "
+            output += f" direction: {direction:.3f}                  "
         elif line_num == 1:
-            output += f" location: {location[1]}x {location[0]}y                 "
+            output += f" location: {location[1]:.3f}x {location[0]:.3f}y                 "
         output += "\n"
     output += f"\033[H\033[{round(location[0])}B\033[{round(location[1])}C@\033[H\033[{len(map_arr)}B"
     for j in range(h):
@@ -253,7 +253,7 @@ def visual(direction, map_arr, location):
                 flag = False
                 out.append(line(ray[1], h))
         if flag:
-            out.append(" " * int(h / 2) + "::" * int(h / 2))
+            out.append(" " * int(h / 2) + ":" * int(h / 2))
         angle = rad_ch(angle, step)
     print_view(out, h, length, map_arr, direction, location)
 

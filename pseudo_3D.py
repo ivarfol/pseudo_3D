@@ -35,6 +35,18 @@ def print_map(map_arr, loc):
     print(f"\033[H\033[{round(loc[0])}B\033[{round(loc[1])}C@\033[H\033[{len(map_arr)}B")
 
 def move(map_arr, loc, direction, rot):
+    '''
+    move
+    function for moving the player
+    map_arr : list
+        1D array of strings containing the map
+    loc : list
+        1D array that represents the player position on the map
+    direction : float
+        current direction the camera is facing
+    rot : float
+        desired change to direc
+    '''
     tmp = []
     tmp.extend(loc)
     direction = rad_ch(direction, rot)

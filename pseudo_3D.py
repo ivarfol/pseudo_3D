@@ -244,7 +244,7 @@ def visual(direction, map_arr, location):
         for ray in hit:
             if angle == ray[0]:
                 flag = False
-                out.append(line(ray[1] * cos(deg_ch(direction, -1 * ray[0]) * pi), h))
+                out.append(line(ray[1] * cos(rad_ch(direction, -1 * ray[0]) * pi), h))
         if flag:
             out.append(" " * int(h / 2) + "::" * int(h / 2))
         angle = rad_ch(angle, step)

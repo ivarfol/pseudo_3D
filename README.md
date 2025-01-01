@@ -92,7 +92,7 @@ this would look like this:
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
 ```
-You can also remove "\\033[{len(map\_arr)}B" from lines 19 and 161 and put the  
+You can also remove "\\033[{len(map\_arr)}B" from lines 36 and 282 and put the  
 following values in visual()  
 h = 24  
 length = 80  

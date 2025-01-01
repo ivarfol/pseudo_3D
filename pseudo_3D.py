@@ -13,29 +13,6 @@ except ImportError:
     print("Could not import necessary modules")
     raise ImportError
 
-def print_map(map_arr, loc):
-    '''
-    print_map
-    prints minimap in the top right corner
-
-    Parameters
-    ----------
-    map_arr : list
-        1D array of strings containing the map
-    loc : list
-        1D array that represents the player position on the map
-
-    Returns
-    -------
-    new player location (tmp) after moving if it does not clip into a wall
-    '''
-    output = "\033[H"
-    for line in map_arr:
-        output += line
-        output += "\n"
-    output += f"\033[H\033[{round(loc[0])}B\033[{round(loc[1])}C@\033[H\033[{len(map_arr)}B"
-    print(output)
-
 def move(map_arr, loc, direction, rot):
     '''
     move
@@ -207,7 +184,7 @@ def line(dist, h):
                 stripe += "░" # ░ ▒ ▓ █
     return(stripe)
 
-def print_view(out, h, length):
+def print_view(out, h, length, map_arr, direction, location):
     '''
     print_view
     outputs the {out}, rotating it 0.5pi radians 
@@ -220,17 +197,39 @@ def print_view(out, h, length):
         hight of the output in symbols
     length : int
         length of each line to be printed
+    map_arr : list
+        1D array of strings containing the map
+    direction : float
+        current direction the camera is facing
+    location : list
+        1D array that represents the player position on the map
 
     Returns
     -------
     None.
     '''
-    output = "\033[A"
+    output = "\033[H"
+    for line_num in range(len(map_arr)):
+        output += map_arr[line_num]
+        if line_num == 0:
+            output += f" direction: {direction:.3f}"
+        elif line_num == 1:
+            output += f" location: {location[1]:.3f}x {location[0]:.3f}y"
+        elif line_num == 3:
+            output += " Controls:"
+        elif line_num == 4:
+            output += " wasd - move forward, left back or right"
+        elif line_num == 5:
+            output += " qe - look left or right"
+        elif line_num == 6:
+            output += " Q - exit"
+        output += "\n"
+    output += f"\033[H\033[{round(location[0])}B\033[{round(location[1])}C@\033[H\033[{len(map_arr)}B"
     for j in range(h):
         for i in range(length):
             output += out[i][j]
         output += "\n"
-    output += "\033[s"
+    output = output[:-1]
     print(output)
 
 def visual(direction, map_arr, location):
@@ -262,9 +261,9 @@ def visual(direction, map_arr, location):
                 flag = False
                 out.append(line(ray[1] * cos(rad_ch(direction, -1 * ray[0]) * pi), h))
         if flag:
-            out.append(" " * int(h / 2) + "::" * int(h / 2))
+            out.append(" " * int(h / 2) + ":" * int(h / 2))
         angle = rad_ch(angle, step)
-    print_view(out, h, length)
+    print_view(out, h, length, map_arr, direction, location)
 
 def main():
     location = [1, 1]
@@ -281,36 +280,27 @@ def main():
                "##########"]
     print(f"\033[H\033[0J\033[{len(map_arr)}B")
     visual(direction, map_arr, location)
-    print_map(map_arr, location)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
-        #print("direction", direction)
         if symb == b"w" or symb == "w":
             location = move(map_arr, location, direction, 0)
             visual(direction, map_arr, location)
-            print_map(map_arr, location)
         elif symb == b"s" or symb == "s":
             location = move(map_arr, location, direction, 1)
             visual(direction, map_arr, location)
-            print_map(map_arr, location)
         elif symb == b"a" or symb == "a":
             location = move(map_arr, location, direction, 1.5)
             visual(direction, map_arr, location)
-            print_map(map_arr, location)
         elif symb == b"d" or symb == "d":
             location = move(map_arr, location, direction, 0.5)
             visual(direction, map_arr, location)
-            print_map(map_arr, location)
         elif symb == b"q" or symb == "q":
             direction = rad_ch(direction, -0.05)
             visual(direction, map_arr, location)
-            print_map(map_arr, location)
         elif symb == b"e" or symb == "e":
             direction = rad_ch(direction, 0.05)
             visual(direction, map_arr, location)
-            print_map(map_arr, location)
         symb = read_ch()
-    print("\033[u", end="")
 
 if __name__ == "__main__":
     main()

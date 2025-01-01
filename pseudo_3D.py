@@ -212,9 +212,17 @@ def print_view(out, h, length, map_arr, direction, location):
     for line_num in range(len(map_arr)):
         output += map_arr[line_num]
         if line_num == 0:
-            output += f" direction: {direction:.3f}                  "
+            output += f" direction: {direction:.3f}"
         elif line_num == 1:
-            output += f" location: {location[1]:.3f}x {location[0]:.3f}y                 "
+            output += f" location: {location[1]:.3f}x {location[0]:.3f}y"
+        elif line_num == 3:
+            output += " Controls:"
+        elif line_num == 4:
+            output += " wasd - move forward, left back or right"
+        elif line_num == 5:
+            output += " qe - look left or right"
+        elif line_num == 6:
+            output += " Q - exit"
         output += "\n"
     output += f"\033[H\033[{round(location[0])}B\033[{round(location[1])}C@\033[H\033[{len(map_arr)}B"
     for j in range(h):

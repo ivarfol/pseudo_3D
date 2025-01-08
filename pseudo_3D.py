@@ -173,7 +173,6 @@ def visual(direction, map_arr, location, length, h, screen, line_color, screen_c
     print_view(map_arr, direction, location)
 
 def main():
-    print("\033[s", end="")
     length = 200
     h = 500
     screen_color = (0, 0, 0)
@@ -195,6 +194,7 @@ def main():
                "#        #",
                "##########"]
     #print(f"\033[H\033[0J\033[{len(map_arr)}B")
+    print("\n" * (len(map_arr)) + f"\033[{len(map_arr)}F" + "\033[s" + "\n" * (len(map_arr) - 1))
     visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
     move_tic = 0
     mod = 0.5

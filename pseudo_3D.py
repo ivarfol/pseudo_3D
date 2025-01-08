@@ -130,6 +130,18 @@ def line(dist, h, i, screen, line_color):
         end = h - 1
     pygame.draw.line(screen, line_color, (i * 5, round(start)), (i * 5, round(end)), 5)
 
+def print_view(map_arr, direction, location):
+    output = "\033[u"
+    for line_num in range(len(map_arr)):
+        output += map_arr[line_num]
+        if line_num == 0:
+            output += f" direction: {direction:.3f}"
+        elif line_num == 1:
+            output += f" location: {location[1]:.3f}x {location[0]:.3f}y"
+        output += "\n"
+    output += f"\033[u\033[{round(location[0])}B\033[{round(location[1])}C@\033[u\033[{len(map_arr)}B"
+    print(output, end="")
+
 def visual(direction, map_arr, location, length, h, screen, line_color, screen_color):
     '''
     visual
@@ -158,9 +170,10 @@ def visual(direction, map_arr, location, length, h, screen, line_color, screen_c
                 line(ray[1], h, i, screen, line_color)
         angle = rad_ch(angle, step)
     pygame.display.flip()
-    #print_view(out, h, length, map_arr, direction, location)
+    print_view(map_arr, direction, location)
 
 def main():
+    print("\033[s", end="")
     length = 200
     h = 500
     screen_color = (0, 0, 0)
@@ -196,6 +209,8 @@ def main():
         if move_tic == 0: 
             if keys[K_LSHIFT]:
                 mod = 2
+            elif keys[K_LCTRL]:
+                mod = 0.5
             if keys[K_w]:
                 location = move(map_arr, location, direction, 0, mod)
                 visual(direction, map_arr, location, length, h, screen, line_color, screen_color)

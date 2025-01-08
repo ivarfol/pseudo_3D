@@ -1,21 +1,20 @@
 # imports
 try:
+    import sys
+    from time import sleep
     from platform import system, release
     from math import sin, cos, ceil, pi
     from pygame.locals import*
     import pygame
     if system() == "Windows":
-        from msvcrt import getch
         if release() == "10":
             from colorama import init
             init()
-    else:
-        import tty, termios, sys
 except ImportError:
     print("Could not import necessary modules")
     raise ImportError
 
-def move(map_arr, loc, direction, rot):
+def move(map_arr, loc, direction, rot, mod):
     '''
     move
     function for moving the player
@@ -31,52 +30,12 @@ def move(map_arr, loc, direction, rot):
     tmp = []
     tmp.extend(loc)
     direction = rad_ch(direction, rot)
-    tmp[0] += 0.25 * sin(direction * pi)
-    tmp[1] += 0.25 * cos(direction * pi)
+    tmp[0] += 0.125 * sin(direction * pi) * mod
+    tmp[1] += 0.125 * cos(direction * pi) * mod
     if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
         return(tmp)
     else:
         return(loc)
-
-def linux_get_ch():
-    '''
-    linux_get_ch
-    Detects a key press and turns off echo in the terminal while active
-
-    Parameters
-    ----------
-    None.
-
-    Returns
-    -------
-    None.
-    '''
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(fd)
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
-
-def read_ch():
-    '''
-    read_ch
-    wrapper for running one of the functions depending on OS
-
-    Parameters
-    ----------
-    None.
-
-    Returns
-    -------
-    character inputted by the user
-    '''
-    if system() == "Windows":
-        return(getch())
-    else:
-        return(linux_get_ch())
 
 def rad_ch(direc, rot):
     '''
@@ -224,28 +183,47 @@ def main():
                "##########"]
     #print(f"\033[H\033[0J\033[{len(map_arr)}B")
     visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-    symb = read_ch()
-    while symb != b"Q" and symb != "Q":
-        pygame.event.get()
-        if symb == b"w" or symb == "w":
-            location = move(map_arr, location, direction, 0)
-            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-        elif symb == b"s" or symb == "s":
-            location = move(map_arr, location, direction, 1)
-            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-        elif symb == b"a" or symb == "a":
-            location = move(map_arr, location, direction, 1.5)
-            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-        elif symb == b"d" or symb == "d":
-            location = move(map_arr, location, direction, 0.5)
-            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-        elif symb == b"q" or symb == "q":
-            direction = rad_ch(direction, -0.05)
-            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-        elif symb == b"e" or symb == "e":
-            direction = rad_ch(direction, 0.05)
-            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-        symb = read_ch()
+    move_tic = 0
+    mod = 0.5
+    while True:
+        events = pygame.event.get()
+        keys = pygame.key.get_pressed()
+        for event in events:
+            if event.type == QUIT:
+                sys.exit(0)
+        if keys[K_x] and keys[K_LSHIFT]:
+            sys.exit(0)
+        if move_tic == 0: 
+            if keys[K_LSHIFT]:
+                mod = 2
+            if keys[K_w]:
+                location = move(map_arr, location, direction, 0, mod)
+                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+                move_tic = 5
+            elif keys[K_s]:
+                location = move(map_arr, location, direction, 1, mod)
+                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+                move_tic = 5
+            elif keys[K_a]:
+                location = move(map_arr, location, direction, 1.5, mod)
+                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+                move_tic = 5
+            elif keys[K_d]:
+                location = move(map_arr, location, direction, 0.5, mod)
+                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+                move_tic = 5
+            elif keys[K_q]:
+                direction = rad_ch(direction, -0.025 * mod)
+                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+                move_tic = 5
+            elif keys[K_e]:
+                direction = rad_ch(direction, 0.025 * mod)
+                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+                move_tic = 5
+            mod = 1
+        if move_tic > 0:
+            move_tic -= 1
+            sleep(0.005)
 
 if __name__ == "__main__":
     main()

@@ -2,6 +2,8 @@
 try:
     from platform import system, release
     from math import sin, cos, ceil, pi
+    from pygame.locals import*
+    import pygame
     if system() == "Windows":
         from msvcrt import getch
         if release() == "10":
@@ -93,7 +95,7 @@ def rad_ch(direc, rot):
     -------
     |direc + rot| or (direc + rot - 2) to stay within the 0 <= x <= 2
     '''
-    if direc + rot > 2:
+    if direc + rot >= 2:
         return(direc + rot - 2)
     elif direc + rot < 0:
         return(2 + direc + rot)
@@ -140,7 +142,7 @@ def raycast(direction, map_arr, step, location, length, shift):
         angle = rad_ch(angle, step)
     return(hit)
 
-def line(dist, h):
+def line(dist, h, i, screen, line_color):
     '''
     line
     creates stripes depending on how far away an object is
@@ -158,7 +160,7 @@ def line(dist, h):
         a column of the future output
     '''
     if dist != 0:
-        start = h /2 * (1 - 1 / dist)
+        start = h / 2 * (1 - 1 / dist)
         end = h / 2 * (1 + 1 / dist)
     else:
         start = 0
@@ -167,72 +169,9 @@ def line(dist, h):
         start = 0
     if end > h:
         end = h - 1
-    stripe = ""
-    for i in range(h):
-        if i < start:
-            stripe += " "
-        elif i > end:
-            stripe += "::"
-        else:
-            if dist < 2:
-                stripe += "█" # ░ ▒ ▓ █
-            elif dist < 4:
-                stripe += "▓" # ░ ▒ ▓ █
-            elif dist < 6:
-                stripe += "▒" # ░ ▒ ▓ █
-            else:
-                stripe += "░" # ░ ▒ ▓ █
-    return(stripe)
+    pygame.draw.line(screen, line_color, (i * 5, round(start)), (i * 5, round(end)), 5)
 
-def print_view(out, h, length, map_arr, direction, location):
-    '''
-    print_view
-    outputs the {out}, rotating it 0.5pi radians 
-
-    Parameters
-    ----------
-    out : list
-        list of strings to be printed
-    h : int
-        hight of the output in symbols
-    length : int
-        length of each line to be printed
-    map_arr : list
-        1D array of strings containing the map
-    direction : float
-        current direction the camera is facing
-    location : list
-        1D array that represents the player position on the map
-
-    Returns
-    -------
-    None.
-    '''
-    output = "\033[H"
-    for line_num in range(len(map_arr)):
-        output += map_arr[line_num]
-        if line_num == 0:
-            output += f" direction: {direction:.3f}"
-        elif line_num == 1:
-            output += f" location: {location[1]:.3f}x {location[0]:.3f}y"
-        elif line_num == 3:
-            output += " Controls:"
-        elif line_num == 4:
-            output += " wasd - move forward, left back or right"
-        elif line_num == 5:
-            output += " qe - look left or right"
-        elif line_num == 6:
-            output += " Q - exit"
-        output += "\n"
-    output += f"\033[H\033[{round(location[0])}B\033[{round(location[1])}C@\033[H\033[{len(map_arr)}B"
-    for j in range(h):
-        for i in range(length):
-            output += out[i][j]
-        output += "\n"
-    output = output[:-1]
-    print(output)
-
-def visual(direction, map_arr, location):
+def visual(direction, map_arr, location, length, h, screen, line_color, screen_color):
     '''
     visual
     creates and outputs the final image to the user
@@ -247,25 +186,30 @@ def visual(direction, map_arr, location):
     -------
     None.
     '''
-    h = 38
-    length = 160 # length * step must be equal to desired view angle in radians
-    step = 0.003125
+    # length * step must be equal to desired view angle in radians
+    step = 0.0025
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
     out = []
     angle = rad_ch(direction, shift)
-    for _ in range(length):
-        flag = True
+    screen.fill(screen_color)
+    for i in range(length):
         for ray in hit:
             if angle == ray[0]:
-                flag = False
-                out.append(line(ray[1], h))
-        if flag:
-            out.append(" " * int(h / 2) + ":" * int(h / 2))
+                line(ray[1], h, i, screen, line_color)
         angle = rad_ch(angle, step)
-    print_view(out, h, length, map_arr, direction, location)
+    pygame.display.flip()
+    #print_view(out, h, length, map_arr, direction, location)
 
 def main():
+    length = 200
+    h = 500
+    screen_color = (0, 0, 0)
+    line_color = (255, 255, 255)
+    screen=pygame.display.set_mode((length*5,h))
+    screen.fill(screen_color)
+    #pygame.draw.line(screen,line_color, (60, 80), (130, 100))
+    pygame.display.flip()
     location = [1, 1]
     direction = 0
     map_arr = ["##########",
@@ -278,28 +222,29 @@ def main():
                "#    #   #",
                "#        #",
                "##########"]
-    print(f"\033[H\033[0J\033[{len(map_arr)}B")
-    visual(direction, map_arr, location)
+    #print(f"\033[H\033[0J\033[{len(map_arr)}B")
+    visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
     symb = read_ch()
     while symb != b"Q" and symb != "Q":
+        pygame.event.get()
         if symb == b"w" or symb == "w":
             location = move(map_arr, location, direction, 0)
-            visual(direction, map_arr, location)
+            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
         elif symb == b"s" or symb == "s":
             location = move(map_arr, location, direction, 1)
-            visual(direction, map_arr, location)
+            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
         elif symb == b"a" or symb == "a":
             location = move(map_arr, location, direction, 1.5)
-            visual(direction, map_arr, location)
+            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
         elif symb == b"d" or symb == "d":
             location = move(map_arr, location, direction, 0.5)
-            visual(direction, map_arr, location)
+            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
         elif symb == b"q" or symb == "q":
             direction = rad_ch(direction, -0.05)
-            visual(direction, map_arr, location)
+            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
         elif symb == b"e" or symb == "e":
             direction = rad_ch(direction, 0.05)
-            visual(direction, map_arr, location)
+            visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
         symb = read_ch()
 
 if __name__ == "__main__":

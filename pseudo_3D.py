@@ -112,6 +112,12 @@ def line(dist, h, i, screen, line_color):
         distance from the hit list in visual()
     h : int
         hight of the output in symbols
+    i : int
+        horizontal position on the screen
+    screen : 
+        screen from pyame
+    line_color : tup
+        tuple with line color
 
     Returns
     -------
@@ -131,6 +137,19 @@ def line(dist, h, i, screen, line_color):
     pygame.draw.line(screen, line_color, (i * 5, round(start)), (i * 5, round(end)), 5)
 
 def print_view(map_arr, direction, location):
+    '''
+    print_view
+    prints the map, location and direction to console
+
+    Parameters
+    ----------
+    map_arr : list
+        1D array of strings containing the map
+    direction : float
+        current direction the camera is facing
+    location : list
+        1D array that represents the player position on the map
+    '''
     output = "\033[u"
     for line_num in range(len(map_arr)):
         output += map_arr[line_num]
@@ -152,6 +171,16 @@ def visual(direction, map_arr, location, length, h, screen, line_color, screen_c
         1D array of strings containing the map
     location : list
         1D array that represents the player position on the map
+    length : int
+        length of the screen
+    h : int
+        hight of the screen
+    screen : 
+        screen from pyame
+    line_color : tup
+        tuple with line color
+    sceen_color : tup
+        tuple with screen color
 
     Returns
     -------
@@ -179,7 +208,6 @@ def main():
     line_color = (255, 255, 255)
     screen=pygame.display.set_mode((length*5,h))
     screen.fill(screen_color)
-    #pygame.draw.line(screen,line_color, (60, 80), (130, 100))
     pygame.display.flip()
     location = [1, 1]
     direction = 0

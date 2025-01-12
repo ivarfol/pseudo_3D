@@ -101,7 +101,7 @@ def raycast(direction, map_arr, step, location, length, shift):
         angle = rad_ch(angle, step)
     return(hit)
 
-def line(dist, h, i, screen, line_color):
+def line(dist, h, i, screen):
     '''
     line
     creates stripes depending on how far away an object is
@@ -134,6 +134,7 @@ def line(dist, h, i, screen, line_color):
         start = 0
     if end > h:
         end = h - 1
+    line_color = (255-dist*10, 255-dist*10, 255-dist*10)
     pygame.draw.line(screen, line_color, (i * 5, round(start)), (i * 5, round(end)), 5)
 
 def print_view(map_arr, direction, location, hit, screen):
@@ -169,7 +170,7 @@ def print_view(map_arr, direction, location, hit, screen):
         pygame.draw.line(screen, ray_color, (ceil(location[1])*10+5, ceil(location[0])*10+5), (ceil(ceil(location[1]) + ray[1]*cos(ray[0]*pi))*10, ceil(ceil(location[0]) + ray[1]*sin(ray[0]*pi))*10))
     print(output, end="")
 
-def visual(direction, map_arr, location, length, h, screen, line_color, screen_color):
+def visual(direction, map_arr, location, length, h, screen, screen_color):
     '''
     visual
     creates and outputs the final image to the user
@@ -204,7 +205,7 @@ def visual(direction, map_arr, location, length, h, screen, line_color, screen_c
     for i in range(length):
         for ray in hit:
             if angle == ray[0]:
-                line(ray[1], h, i, screen, line_color)
+                line(ray[1], h, i, screen)
         angle = rad_ch(angle, step)
     print_view(map_arr, direction, location, hit, screen)
     pygame.display.flip()
@@ -231,7 +232,7 @@ def main():
                "##########"]
     #print(f"\033[H\033[0J\033[{len(map_arr)}B")
     print("\n" * (len(map_arr)) + f"\033[{len(map_arr)}F" + "\033[s" + "\n" * (len(map_arr) - 1))
-    visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
+    visual(direction, map_arr, location, length, h, screen, screen_color)
     move_tic = 0
     mod = 0.5
     while True:
@@ -249,32 +250,32 @@ def main():
                 mod = 0.5
             if keys[K_w]:
                 location = move(map_arr, location, direction, 0, mod)
-                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-                move_tic = 5
+                visual(direction, map_arr, location, length, h, screen, screen_color)
+                move_tic = 1
             elif keys[K_s]:
                 location = move(map_arr, location, direction, 1, mod)
-                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-                move_tic = 5
+                visual(direction, map_arr, location, length, h, screen, screen_color)
+                move_tic = 1
             if keys[K_a]:
                 location = move(map_arr, location, direction, 1.5, mod)
-                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-                move_tic = 5
+                visual(direction, map_arr, location, length, h, screen, screen_color)
+                move_tic = 1
             elif keys[K_d]:
                 location = move(map_arr, location, direction, 0.5, mod)
-                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-                move_tic = 5
+                visual(direction, map_arr, location, length, h, screen, screen_color)
+                move_tic = 1
             if keys[K_q]:
                 direction = rad_ch(direction, -0.025 * mod)
-                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-                move_tic = 5
+                visual(direction, map_arr, location, length, h, screen, screen_color)
+                move_tic = 1
             elif keys[K_e]:
                 direction = rad_ch(direction, 0.025 * mod)
-                visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
-                move_tic = 5
+                visual(direction, map_arr, location, length, h, screen, screen_color)
+                move_tic = 1
             mod = 1
         if move_tic > 0:
             move_tic -= 1
-            sleep(0.005)
+            sleep(0.025)
 
 if __name__ == "__main__":
     main()

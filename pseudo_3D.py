@@ -136,7 +136,7 @@ def line(dist, h, i, screen, line_color):
         end = h - 1
     pygame.draw.line(screen, line_color, (i * 5, round(start)), (i * 5, round(end)), 5)
 
-def print_view(map_arr, direction, location):
+def print_view(map_arr, direction, location, hit, screen):
     '''
     print_view
     prints the map, location and direction to console
@@ -151,7 +151,12 @@ def print_view(map_arr, direction, location):
         1D array that represents the player position on the map
     '''
     output = "\033[u"
+    line_color = (0, 0, 255)
+    ray_color = (255, 0, 0)
     for line_num in range(len(map_arr)):
+        for symbol_num in range(len(map_arr[line_num])):
+            if map_arr[line_num][symbol_num] == "#":
+                pygame.draw.rect(screen, line_color, pygame.Rect(symbol_num*10, line_num*10, 10, 10))
         output += map_arr[line_num]
         if line_num == 0:
             output += f" direction: {direction:.3f}"
@@ -159,6 +164,9 @@ def print_view(map_arr, direction, location):
             output += f" location: {location[1]:.3f}x {location[0]:.3f}y"
         output += "\n"
     output += f"\033[u\033[{round(location[0])}B\033[{round(location[1])}C@\033[u\033[{len(map_arr)}B"
+    pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(ceil(location[1])*10+2, ceil(location[0])*10+2, 6, 6))
+    for ray in hit:
+        pygame.draw.line(screen, ray_color, (ceil(location[1])*10+3, ceil(location[0])*10+3), (round(ceil(location[1]) + ray[1]*cos(ray[0]*pi))*10, round(ceil(location[0]) + ray[1]*sin(ray[0]*pi))*10))
     print(output, end="")
 
 def visual(direction, map_arr, location, length, h, screen, line_color, screen_color):
@@ -198,8 +206,8 @@ def visual(direction, map_arr, location, length, h, screen, line_color, screen_c
             if angle == ray[0]:
                 line(ray[1], h, i, screen, line_color)
         angle = rad_ch(angle, step)
+    print_view(map_arr, direction, location, hit, screen)
     pygame.display.flip()
-    print_view(map_arr, direction, location)
 
 def main():
     length = 200
@@ -247,7 +255,7 @@ def main():
                 location = move(map_arr, location, direction, 1, mod)
                 visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
                 move_tic = 5
-            elif keys[K_a]:
+            if keys[K_a]:
                 location = move(map_arr, location, direction, 1.5, mod)
                 visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
                 move_tic = 5
@@ -255,7 +263,7 @@ def main():
                 location = move(map_arr, location, direction, 0.5, mod)
                 visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
                 move_tic = 5
-            elif keys[K_q]:
+            if keys[K_q]:
                 direction = rad_ch(direction, -0.025 * mod)
                 visual(direction, map_arr, location, length, h, screen, line_color, screen_color)
                 move_tic = 5

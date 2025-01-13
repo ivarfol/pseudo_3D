@@ -250,28 +250,23 @@ def main():
                 mod = 0.5
             if keys[K_w]:
                 location = move(map_arr, location, direction, 0, mod)
-                visual(direction, map_arr, location, length, h, screen, screen_color)
                 move_tic = 1
             elif keys[K_s]:
                 location = move(map_arr, location, direction, 1, mod)
-                visual(direction, map_arr, location, length, h, screen, screen_color)
                 move_tic = 1
             if keys[K_a]:
                 location = move(map_arr, location, direction, 1.5, mod)
-                visual(direction, map_arr, location, length, h, screen, screen_color)
                 move_tic = 1
             elif keys[K_d]:
                 location = move(map_arr, location, direction, 0.5, mod)
-                visual(direction, map_arr, location, length, h, screen, screen_color)
                 move_tic = 1
             if keys[K_q]:
                 direction = rad_ch(direction, -0.025 * mod)
-                visual(direction, map_arr, location, length, h, screen, screen_color)
                 move_tic = 1
             elif keys[K_e]:
                 direction = rad_ch(direction, 0.025 * mod)
-                visual(direction, map_arr, location, length, h, screen, screen_color)
                 move_tic = 1
+            visual(direction, map_arr, location, length, h, screen, screen_color)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

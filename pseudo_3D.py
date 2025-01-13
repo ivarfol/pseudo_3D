@@ -266,7 +266,8 @@ def main():
             elif keys[K_e]:
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
-            visual(direction, map_arr, location, length, h, screen, screen_color)
+            if move_tic == 1:
+                visual(direction, map_arr, location, length, h, screen, screen_color)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

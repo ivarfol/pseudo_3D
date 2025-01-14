@@ -167,7 +167,7 @@ def print_view(map_arr, direction, location, hit, screen):
     output += f"\033[u\033[{round(location[0])}B\033[{round(location[1])}C@\033[u\033[{len(map_arr)}B"
     pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(round(location[1]*10)+7, round(location[0]*10)+7, 6, 6))
     for ray in hit:
-        pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+8), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
+        pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
     print(output, end="")
 
 def visual(direction, map_arr, location, length, h, screen, screen_color):

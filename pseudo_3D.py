@@ -101,7 +101,7 @@ def raycast(direction, map_arr, step, location, length, shift):
         angle = rad_ch(angle, step)
     return(hit)
 
-def line(dist, h, i, screen):
+def line(dist, h, i, screen, scale):
     '''
     line
     creates stripes depending on how far away an object is
@@ -118,6 +118,8 @@ def line(dist, h, i, screen):
         screen from pyame
     line_color : tup
         tuple with line color
+    scale : int
+        how scaled up the output is
 
     Returns
     -------
@@ -135,7 +137,7 @@ def line(dist, h, i, screen):
     if end > h:
         end = h - 1
     line_color = (255-dist*10, 255-dist*10, 255-dist*10)
-    pygame.draw.line(screen, line_color, (i * 5, round(start)), (i * 5, round(end)), 5)
+    pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
 
 def print_view(map_arr, direction, location, hit, screen):
     '''
@@ -170,7 +172,7 @@ def print_view(map_arr, direction, location, hit, screen):
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
     print(output, end="")
 
-def visual(direction, map_arr, location, length, h, screen, screen_color):
+def visual(direction, map_arr, location, length, h, screen, screen_color, scale):
     '''
     visual
     creates and outputs the final image to the user
@@ -190,6 +192,8 @@ def visual(direction, map_arr, location, length, h, screen, screen_color):
         tuple with line color
     sceen_color : tup
         tuple with screen color
+    scale : int
+        how scaled up the output is
 
     Returns
     -------
@@ -205,7 +209,7 @@ def visual(direction, map_arr, location, length, h, screen, screen_color):
     for i in range(length):
         for ray in hit:
             if angle == ray[0]:
-                line(ray[1], h, i, screen)
+                line(ray[1], h, i, screen, scale)
         angle = rad_ch(angle, step)
     print_view(map_arr, direction, location, hit, screen)
     pygame.display.flip()
@@ -213,9 +217,10 @@ def visual(direction, map_arr, location, length, h, screen, screen_color):
 def main():
     length = 200
     h = 500
+    scale = 5
     screen_color = (0, 0, 0)
     line_color = (255, 255, 255)
-    screen=pygame.display.set_mode((length*5,h))
+    screen=pygame.display.set_mode((length*scale,h))
     screen.fill(screen_color)
     pygame.display.flip()
     location = [1, 1]
@@ -232,7 +237,7 @@ def main():
                "##########"]
     #print(f"\033[H\033[0J\033[{len(map_arr)}B")
     print("\n" * (len(map_arr)) + f"\033[{len(map_arr)}F" + "\033[s" + "\n" * (len(map_arr) - 1))
-    visual(direction, map_arr, location, length, h, screen, screen_color)
+    visual(direction, map_arr, location, length, h, screen, screen_color, scale)
     move_tic = 0
     mod = 0.5
     while True:
@@ -267,7 +272,7 @@ def main():
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
             if move_tic == 1:
-                visual(direction, map_arr, location, length, h, screen, screen_color)
+                visual(direction, map_arr, location, length, h, screen, screen_color, scale)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

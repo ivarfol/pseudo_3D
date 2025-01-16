@@ -153,24 +153,16 @@ def print_view(map_arr, direction, location, hit, screen):
     location : list
         1D array that represents the player position on the map
     '''
-    output = "\033[u"
     line_color = (0, 0, 255)
     ray_color = (255, 0, 0)
     for line_num in range(len(map_arr)):
         for symbol_num in range(len(map_arr[line_num])):
             if map_arr[line_num][symbol_num] == "#":
                 pygame.draw.rect(screen, line_color, pygame.Rect(symbol_num*10, line_num*10, 10, 10))
-        output += map_arr[line_num]
-        if line_num == 0:
-            output += f" direction: {direction:.3f}"
-        elif line_num == 1:
-            output += f" location: {location[1]:.3f}x {location[0]:.3f}y"
-        output += "\n"
-    output += f"\033[u\033[{round(location[0])}B\033[{round(location[1])}C@\033[u\033[{len(map_arr)}B"
     pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(round(location[1]*10)+7, round(location[0]*10)+7, 6, 6))
     for ray in hit:
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
-    print(output, end="")
+    print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
 
 def visual(direction, map_arr, location, length, h, screen, screen_color, scale):
     '''
@@ -235,8 +227,6 @@ def main():
                "#    #   #",
                "#        #",
                "##########"]
-    #print(f"\033[H\033[0J\033[{len(map_arr)}B")
-    print("\n" * (len(map_arr)) + f"\033[{len(map_arr)}F" + "\033[s" + "\n" * (len(map_arr) - 1))
     visual(direction, map_arr, location, length, h, screen, screen_color, scale)
     move_tic = 0
     mod = 0.5

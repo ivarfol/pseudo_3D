@@ -136,7 +136,7 @@ def line(dist, h, i, screen, scale):
         start = 0
     if end > h:
         end = h - 1
-    line_color = (255-dist*10, 255-dist*10, 255-dist*10)
+    line_color = (255-dist*25.5, 255-dist*25.5, 255-dist*25.5)
     pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
 
 def print_view(map_arr, direction, location, hit, screen):

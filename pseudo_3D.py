@@ -248,22 +248,22 @@ def main():
                 mod = 2
             elif keys[K_LCTRL]:
                 mod = 0.5
-            if keys[K_w]:
+            if keys[K_w] and not keys[K_s]:
                 location = move(map_arr, location, direction, 0, mod)
                 move_tic = 1
-            elif keys[K_s]:
+            elif keys[K_s] and not keys[K_w]:
                 location = move(map_arr, location, direction, 1, mod)
                 move_tic = 1
-            if keys[K_a]:
+            if keys[K_a] and not keys[K_d]:
                 location = move(map_arr, location, direction, 1.5, mod)
                 move_tic = 1
-            elif keys[K_d]:
+            elif keys[K_d] and not keys[K_a]:
                 location = move(map_arr, location, direction, 0.5, mod)
                 move_tic = 1
-            if keys[K_q]:
+            if keys[K_q] and not keys[K_e]:
                 direction = rad_ch(direction, -0.025 * mod)
                 move_tic = 1
-            elif keys[K_e]:
+            elif keys[K_e] and not keys[K_q]:
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
             if move_tic == 1:

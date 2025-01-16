@@ -1,3 +1,4 @@
+from math import floor
 while True:
     try:
         h = int(input("desired vertical resolution (must be divizible by 2): "))
@@ -10,7 +11,13 @@ while True:
         break
 while True:
     try:
-        length = int(input("desired hirizontal resolution: "))
+        width = int(input("input horizontal resolution: "))
+        break
+    except:
+        print("must be an integer!")
+while True:
+    try:
+        length = int(input("desired true hirizontal resolution: "))
         break
     except:
         print("must be an integer!")
@@ -22,5 +29,6 @@ while True:
         print("must be a number!")
 print("h =", h)
 print("length =", length)
+print("scale =", floor(width/length))
 print("step =", fov / length)
 print("shift =", -fov / 2)

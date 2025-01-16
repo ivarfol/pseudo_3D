@@ -162,7 +162,7 @@ def print_view(map_arr, direction, location, hit, screen):
     pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(round(location[1]*10)+7, round(location[0]*10)+7, 6, 6))
     for ray in hit:
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
-    print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
+    #print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
 
 def visual(direction, map_arr, location, length, h, screen, screen_color, scale):
     '''

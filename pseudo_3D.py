@@ -142,7 +142,7 @@ def line(dist, h, i, screen, scale):
 def print_view(map_arr, direction, location, hit, screen):
     '''
     print_view
-    prints the map, location and direction to console
+    prints the map
 
     Parameters
     ----------

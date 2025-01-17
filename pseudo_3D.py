@@ -164,7 +164,7 @@ def print_view(map_arr, direction, location, hit, screen):
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
     #print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
 
-def visual(direction, map_arr, location, length, h, screen, screen_color, scale):
+def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map):
     '''
     visual
     creates and outputs the final image to the user
@@ -203,7 +203,8 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale)
             if angle == ray[0]:
                 line(ray[1], h, i, screen, scale)
         angle = rad_ch(angle, step)
-    print_view(map_arr, direction, location, hit, screen)
+    if show_map:
+        print_view(map_arr, direction, location, hit, screen)
     pygame.display.flip()
 
 def main():
@@ -217,6 +218,7 @@ def main():
     pygame.display.flip()
     location = [1, 1]
     direction = 0
+    show_map = False
     map_arr = ["###################################################",
                "#               #                                 #",
                "#               #        #                        #",
@@ -227,7 +229,7 @@ def main():
                "#    #      # #####      #                        #",
                "#        ## #            #                        #",
                "###################################################"]
-    visual(direction, map_arr, location, length, h, screen, screen_color, scale)
+    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map)
     move_tic = 0
     mod = 0.5
     while True:
@@ -236,6 +238,12 @@ def main():
         for event in events:
             if event.type == QUIT:
                 sys.exit(0)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_m:
+                if show_map:
+                    show_map = False
+                else:
+                    show_map = True
+                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map)
         if keys[K_x] and keys[K_LSHIFT]:
             sys.exit(0)
         if move_tic == 0: 
@@ -262,7 +270,7 @@ def main():
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
             if move_tic == 1:
-                visual(direction, map_arr, location, length, h, screen, screen_color, scale)
+                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

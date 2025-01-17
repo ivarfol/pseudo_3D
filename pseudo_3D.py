@@ -172,7 +172,7 @@ def print_view(map_arr, direction, location, hit, screen):
 def open_door(hit, location, map_arr):
     pass #removes door if found within 0.5 units
 
-def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, door):
+def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, door, noclip):
     '''
     visual
     creates and outputs the final image to the user
@@ -215,6 +215,8 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
         angle = rad_ch(angle, step)
     if show_map:
         print_view(map_arr, direction, location, hit, screen)
+    if noclip:
+        pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(length*scale-30, h-30, 20, 20))
     pygame.display.flip()
 
 def main():
@@ -229,7 +231,7 @@ def main():
     location = [1, 1]
     direction = 0
     show_map = False
-    noclip = True
+    noclip = False
     map_arr = ["###################################################",
                "#               #        d                        #",
                "#               #        #                        #",
@@ -240,7 +242,7 @@ def main():
                "#    #      # #####      #                        #",
                "#        ## #            #                        #",
                "###################################################"]
-    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False)
+    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False, noclip)
     move_tic = 0
     mod = 0.5
     while True:
@@ -255,9 +257,15 @@ def main():
                         show_map = False
                     else:
                         show_map = True
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False)
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False, noclip)
                 elif event.key == pygame.K_SPACE:
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, True)
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, True, noclip)
+                elif event.key == pygame.K_n:
+                    if noclip:
+                        noclip = False
+                    else:
+                        noclip = True
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, True, noclip)
         if keys[K_x] and keys[K_LSHIFT]:
             sys.exit(0)
         if move_tic == 0: 
@@ -284,7 +292,7 @@ def main():
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
             if move_tic == 1:
-                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False)
+                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False, noclip)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

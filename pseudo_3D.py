@@ -14,7 +14,7 @@ except ImportError:
     print("Could not import necessary modules")
     raise ImportError
 
-def move(map_arr, loc, direction, rot, mod):
+def move(map_arr, loc, direction, rot, mod, noclip):
     '''
     move
     function for moving the player
@@ -32,7 +32,7 @@ def move(map_arr, loc, direction, rot, mod):
     direction = rad_ch(direction, rot)
     tmp[0] += 0.125 * sin(direction * pi) * mod
     tmp[1] += 0.125 * cos(direction * pi) * mod
-    if map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#":
+    if ceil(tmp[0]) < len(map_arr)-1 and ceil(tmp[0]) > 0 and ceil(tmp[1]) < len(map_arr[ceil(tmp[0])])-1 and ceil(tmp[1]) > 0 and (map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#" or noclip):
         return(tmp)
     else:
         return(loc)
@@ -219,6 +219,7 @@ def main():
     location = [1, 1]
     direction = 0
     show_map = False
+    noclip = False
     map_arr = ["###################################################",
                "#               #                                 #",
                "#               #        #                        #",
@@ -252,16 +253,16 @@ def main():
             elif keys[K_LCTRL]:
                 mod = 0.5
             if keys[K_w] and not keys[K_s]:
-                location = move(map_arr, location, direction, 0, mod)
+                location = move(map_arr, location, direction, 0, mod, noclip)
                 move_tic = 1
             elif keys[K_s] and not keys[K_w]:
-                location = move(map_arr, location, direction, 1, mod)
+                location = move(map_arr, location, direction, 1, mod, noclip)
                 move_tic = 1
             if keys[K_a] and not keys[K_d]:
-                location = move(map_arr, location, direction, 1.5, mod)
+                location = move(map_arr, location, direction, 1.5, mod, noclip)
                 move_tic = 1
             elif keys[K_d] and not keys[K_a]:
-                location = move(map_arr, location, direction, 0.5, mod)
+                location = move(map_arr, location, direction, 0.5, mod, noclip)
                 move_tic = 1
             if keys[K_q] and not keys[K_e]:
                 direction = rad_ch(direction, -0.025 * mod)

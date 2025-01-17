@@ -169,7 +169,7 @@ def print_view(map_arr, direction, location, hit, screen):
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
     #print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
 
-def open_door():
+def open_door(hit, location, map_arr):
     pass #removes door if found within 0.5 units
 
 def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, door):
@@ -205,7 +205,7 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
     hit = raycast(direction, map_arr, step, location, length, shift)
     out = []
     if door:
-        open_door()
+        open_door(hit, location, map_arr)
     angle = rad_ch(direction, shift)
     screen.fill(screen_color)
     for i in range(length):

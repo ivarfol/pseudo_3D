@@ -32,7 +32,7 @@ def move(map_arr, loc, direction, rot, mod, noclip):
     direction = rad_ch(direction, rot)
     tmp[0] += 0.125 * sin(direction * pi) * mod
     tmp[1] += 0.125 * cos(direction * pi) * mod
-    if ceil(tmp[0]) < len(map_arr)-1 and ceil(tmp[0]) > 0 and ceil(tmp[1]) < len(map_arr[ceil(tmp[0])])-1 and ceil(tmp[1]) > 0 and (map_arr[ceil(tmp[0])][ceil(tmp[1])] == " " or noclip):
+    if ceil(tmp[0]) < len(map_arr)-1 and ceil(tmp[0]) > 0 and ceil(tmp[1]) < len(map_arr[ceil(tmp[0])])-1 and ceil(tmp[1]) > 0 and (map_arr[ceil(tmp[0])][ceil(tmp[1])] != "#" or noclip):
         return(tmp)
     else:
         return(loc)
@@ -94,14 +94,14 @@ def raycast(direction, map_arr, step, location, length, shift):
     for _ in range(length):
         mov = 0.1
         for _ in range(100):
-            if map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))] != " ":
-                hit.append([angle, mov, map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))]])
+            if map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))] == "#":
+                hit.append([angle, mov])
                 break
             mov += 0.1
         angle = rad_ch(angle, step)
     return(hit)
 
-def line(dist, h, i, screen, scale, tile):
+def line(dist, h, i, screen, scale):
     '''
     line
     creates stripes depending on how far away an object is
@@ -136,10 +136,7 @@ def line(dist, h, i, screen, scale, tile):
         start = 0
     if end > h:
         end = h - 1
-    if tile == "d":
-        line_color = (155-dist*15.5, 155-dist*15.5, 0)
-    else:
-        line_color = (155-dist*15.5, 155-dist*15.5, 155-dist*15.5)
+    line_color = (155-dist*15.5, 155-dist*15.5, 155-dist*15.5)
     pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
 
 def print_view(map_arr, direction, location, hit, screen):
@@ -162,17 +159,12 @@ def print_view(map_arr, direction, location, hit, screen):
         for symbol_num in range(len(map_arr[line_num])):
             if map_arr[line_num][symbol_num] == "#":
                 pygame.draw.rect(screen, line_color, pygame.Rect(symbol_num*10, line_num*10, 10, 10))
-            elif map_arr[line_num][symbol_num] == "d":
-                pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(symbol_num*10, line_num*10, 10, 10))
     pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(round(location[1]*10)+7, round(location[0]*10)+7, 6, 6))
     for ray in hit:
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
     #print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
 
-def open_door(hit, location, map_arr):
-    pass #removes door if found within 0.5 units
-
-def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, door, noclip):
+def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip):
     '''
     visual
     creates and outputs the final image to the user
@@ -204,14 +196,12 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
     out = []
-    if door:
-        open_door(hit, location, map_arr)
     angle = rad_ch(direction, shift)
     screen.fill(screen_color)
     for i in range(length):
         for ray in hit:
             if angle == ray[0]:
-                line(ray[1], h, i, screen, scale, ray[2])
+                line(ray[1], h, i, screen, scale)
         angle = rad_ch(angle, step)
     if show_map:
         print_view(map_arr, direction, location, hit, screen)
@@ -233,7 +223,7 @@ def main():
     show_map = False
     noclip = False
     map_arr = ["###################################################",
-               "#               #        d                        #",
+               "#               #                                 #",
                "#               #        #                        #",
                "#  ##    ##########      #                        #",
                "#   #             #      #                        #",
@@ -242,7 +232,7 @@ def main():
                "#    #      # #####      #                        #",
                "#        ## #            #                        #",
                "###################################################"]
-    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False, noclip)
+    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
     move_tic = 0
     mod = 0.5
     while True:
@@ -257,15 +247,13 @@ def main():
                         show_map = False
                     else:
                         show_map = True
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False, noclip)
-                elif event.key == pygame.K_SPACE:
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, True, noclip)
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
                 elif event.key == pygame.K_n:
                     if noclip:
                         noclip = False
                     else:
                         noclip = True
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, True, noclip)
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
         if keys[K_x] and keys[K_LSHIFT]:
             sys.exit(0)
         if move_tic == 0: 
@@ -292,7 +280,7 @@ def main():
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
             if move_tic == 1:
-                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, False, noclip)
+                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

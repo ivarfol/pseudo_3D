@@ -3,7 +3,7 @@ try:
     import sys
     from time import sleep
     from platform import system, release
-    from math import sin, cos, ceil, pi
+    from math import sin, cos, ceil, pi, floor
     from pygame.locals import*
     import pygame
     if system() == "Windows":
@@ -90,14 +90,49 @@ def raycast(direction, map_arr, step, location, length, shift):
     '''
     hit = []
     angle = rad_ch(direction, shift)
-    mov = 0
+    ox, oy = location[1], location[0]
+    x_map, y_map = int(location[1]), int(location[0])
     for _ in range(length):
-        mov = 0.1
-        for _ in range(100):
-            if map_arr[ceil(location[0] + mov * sin(angle * pi))][ceil(location[1] + mov * cos(angle * pi))] == "#":
-                hit.append([angle, mov])
+        sin_a = sin(angle * pi)
+        cos_a = cos(angle * pi)
+
+        # horizontals
+        y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1)
+
+        depth_hor = (y_hor - oy) / sin_a
+        x_hor = ox + depth_hor * cos_a
+
+        delta_depth = dy / sin_a
+        dx = delta_depth * cos_a
+
+        for i in range(10):
+            tile_hor = floor(x_hor)+1, floor(y_hor)+1
+            if tile_hor[1] > 9 or tile_hor[0] > 50 or tile_hor[1] < 1 or tile_hor[0] < 1 or map_arr[tile_hor[1]][tile_hor[0]] == "#":
                 break
-            mov += 0.1
+            x_hor += dx
+            y_hor += dy
+            depth_hor += delta_depth
+
+        # verticals
+        x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-6, -1)
+
+        depth_vert = (x_vert - ox) / cos_a
+        y_vert = oy + depth_vert * sin_a
+
+        delta_depth = dx / cos_a
+        dy = delta_depth * sin_a
+
+        for i in range(10):
+            tile_vert = floor(x_vert)+1, floor(y_vert)+1
+            if tile_vert[1] > 9 or tile_vert[0] > 50 or tile_vert[1] < 1 or tile_vert[0] < 1 or map_arr[tile_vert[1]][tile_vert[0]] == "#":
+                break
+            x_vert += dx
+            y_vert += dy
+            depth_vert += delta_depth
+        if depth_vert < depth_hor:
+            hit.append([angle, depth_vert])
+        else:
+            hit.append([angle, depth_hor])
         angle = rad_ch(angle, step)
     return(hit)
 
@@ -136,7 +171,8 @@ def line(dist, h, i, screen, scale):
         start = 0
     if end > h:
         end = h - 1
-    line_color = (155-dist*15.5, 155-dist*15.5, 155-dist*15.5)
+    #line_color = (255-dist*2, 255-dist*2, 255-dist*2)
+    line_color = (155, 155, 155)
     pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
 
 def print_view(map_arr, direction, location, hit, screen):
@@ -195,7 +231,6 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
     step = 0.0025
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
-    out = []
     angle = rad_ch(direction, shift)
     screen.fill(screen_color)
     for i in range(length):

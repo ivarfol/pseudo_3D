@@ -95,7 +95,10 @@ def raycast(direction, map_arr, step, location, length, shift):
     for _ in range(length):
         sin_a = sin(angle * pi)
         cos_a = cos(angle * pi)
-
+        if sin_a == 0:
+            sin_a = 1e-6
+        elif cos_a == 0:
+            cos_a = 1e-6
         # horizontals
         y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1)
 
@@ -105,7 +108,7 @@ def raycast(direction, map_arr, step, location, length, shift):
         delta_depth = dy / sin_a
         dx = delta_depth * cos_a
 
-        for i in range(10):
+        for i in range(20):
             tile_hor = floor(x_hor)+1, floor(y_hor)+1
             if tile_hor[1] > 9 or tile_hor[0] > 50 or tile_hor[1] < 1 or tile_hor[0] < 1 or map_arr[tile_hor[1]][tile_hor[0]] == "#":
                 break
@@ -122,7 +125,7 @@ def raycast(direction, map_arr, step, location, length, shift):
         delta_depth = dx / cos_a
         dy = delta_depth * sin_a
 
-        for i in range(10):
+        for i in range(20):
             tile_vert = floor(x_vert)+1, floor(y_vert)+1
             if tile_vert[1] > 9 or tile_vert[0] > 50 or tile_vert[1] < 1 or tile_vert[0] < 1 or map_arr[tile_vert[1]][tile_vert[0]] == "#":
                 break
@@ -171,8 +174,10 @@ def line(dist, h, i, screen, scale):
         start = 0
     if end > h:
         end = h - 1
-    #line_color = (255-dist*2, 255-dist*2, 255-dist*2)
-    line_color = (155, 155, 155)
+    if dist <=20:
+        line_color = (200-dist*10, 200-dist*10, 200-dist*10)
+    else:
+        line_color = (0, 0, 0)
     pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
 
 def print_view(map_arr, direction, location, hit, screen):

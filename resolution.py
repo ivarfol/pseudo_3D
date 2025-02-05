@@ -2,7 +2,7 @@ from math import floor
 while True:
     try:
         h = int(input("desired vertical resolution (must be divizible by 2): "))
-    except:
+    except ValueError:
         print("must be an integer!")
         continue
     if h % 2 != 0:
@@ -13,19 +13,19 @@ while True:
     try:
         width = int(input("input horizontal resolution: "))
         break
-    except:
+    except ValueError:
         print("must be an integer!")
 while True:
     try:
         length = int(input("desired true hirizontal resolution: "))
         break
-    except:
+    except ValueError:
         print("must be an integer!")
 while True:
     try:
         fov = float(input("desired fov in pi radians: "))
         break
-    except:
+    except ValueError:
         print("must be a number!")
 print("h =", h)
 print("length =", length)

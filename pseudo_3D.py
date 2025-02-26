@@ -3,7 +3,7 @@ try:
     import sys
     from time import sleep
     from platform import system, release
-    from math import sin, cos, ceil, pi, floor, acos, sqrt
+    from math import sin, cos, ceil, pi, floor, acos, sqrt, asin
     from pygame.locals import*
     import pygame
     if system() == "Windows":
@@ -61,10 +61,10 @@ def rad_ch(direc, rot):
     else:
         return(direc + rot)
 
-def raycast(direction, map_arr, step, location, length, shift):
+def raycast(direction, map_arr, location, length, shift, base_angles, side):
     '''
     raycast
-    casts rays each {step * pi} radians, records angle and distance for the rays
+    casts rays, records angle and distance for the rays
     moved
 
     Parameters
@@ -73,8 +73,6 @@ def raycast(direction, map_arr, step, location, length, shift):
         current direction the camera is facing
     map_arr : list
         1D array of strings containing the map
-    step : float
-        angle in radians for the intervals the rays are being cast at
     location : list
         1D array that represents the player position on the map
     length : int
@@ -90,11 +88,10 @@ def raycast(direction, map_arr, step, location, length, shift):
     '''
     hit = []
     _angle = rad_ch(direction, shift)
-    hipotinuse = sqrt(length * length / 2)
     ox, oy = location[1], location[0]
     x_map, y_map = int(location[1]), int(location[0])
     for j in range(length):
-        angle = rad_ch(_angle + acos(((hipotinuse ** 2 + j ** 2 - 2 * hipotinuse * j * cos(0.25 * pi)) + hipotinuse ** 2 - j ** 2) / (2 * sqrt(hipotinuse ** 2 + j ** 2 - 2 * hipotinuse * j * cos(0.25 * pi)) * hipotinuse)) / pi, 0)
+        angle = rad_ch(_angle + acos((side - j * cos(base_angles * pi)) / sqrt(side ** 2 + j ** 2 - 2 * side * j * cos(base_angles * pi))) / pi, 0)
         sin_a = sin(angle * pi)
         cos_a = cos(angle * pi)
         if sin_a == 0:
@@ -206,7 +203,7 @@ def print_view(map_arr, direction, location, hit, screen):
         pygame.draw.line(screen, ray_color, (round(location[1]*10)+10, round(location[0]*10)+10), (ceil((location[1] + ray[1]*cos(ray[0]*pi))*10+10), ceil((location[0] + ray[1]*sin(ray[0]*pi))*10+10)))
     #print(f"direction: {direction:.3f}\nlocation: {location[1]:.3f}x {location[0]:.3f}y")
 
-def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip):
+def visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip, shift, base_angles, side):
     '''
     visual
     creates and outputs the final image to the user
@@ -233,10 +230,7 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
     -------
     None.
     '''
-    # length * step must be equal to desired view angle in radians
-    step = 0.0025
-    shift = -0.25 # must be equal to - <desired view angle> / 2
-    hit = raycast(direction, map_arr, step, location, length, shift)
+    hit = raycast(direction, map_arr, location, length, shift, base_angles, side)
     screen.fill(screen_color)
     for i in range(length):
         line(hit[i][1], h, i, screen, scale, hit[i][1] * cos(rad_ch(rad_ch(direction - hit[i][0], 0), 0) * pi))
@@ -269,9 +263,12 @@ def main():
                "#    #      # #####      #                        #",
                "#        ## #            #                        #",
                "###################################################"]
-    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
     move_tic = 0
     mod = 0.5
+    shift = -0.25 # must be equal to - <desired view angle> / 2
+    base_angles = rad_ch(0.5, shift)
+    side = length * sin(base_angles * pi) / sin(shift * -2 * pi)
+    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip, shift, base_angles, side)
     while True:
         events = pygame.event.get()
         keys = pygame.key.get_pressed()
@@ -284,13 +281,13 @@ def main():
                         show_map = False
                     else:
                         show_map = True
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip, shift, base_angles, side)
                 elif event.key == pygame.K_n:
                     if noclip:
                         noclip = False
                     else:
                         noclip = True
-                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
+                    visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip, shift, base_angles, side)
         if keys[K_x] and keys[K_LSHIFT]:
             sys.exit(0)
         if move_tic == 0: 
@@ -317,7 +314,7 @@ def main():
                 direction = rad_ch(direction, 0.025 * mod)
                 move_tic = 1
             if move_tic == 1:
-                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip)
+                visual(direction, map_arr, location, length, h, screen, screen_color, scale, show_map, noclip, shift, base_angles, side)
             mod = 1
         if move_tic > 0:
             move_tic -= 1

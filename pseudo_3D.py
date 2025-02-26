@@ -3,7 +3,7 @@ try:
     import sys
     from time import sleep
     from platform import system, release
-    from math import sin, cos, ceil, pi, floor
+    from math import sin, cos, ceil, pi, floor, acos, sqrt
     from pygame.locals import*
     import pygame
     if system() == "Windows":
@@ -89,10 +89,12 @@ def raycast(direction, map_arr, step, location, length, shift):
         list of lists containing the angle and distance travelled for each ray
     '''
     hit = []
-    angle = rad_ch(direction, shift)
+    _angle = rad_ch(direction, shift)
+    hipotinuse = sqrt(length * length / 2)
     ox, oy = location[1], location[0]
     x_map, y_map = int(location[1]), int(location[0])
-    for _ in range(length):
+    for j in range(length):
+        angle = rad_ch(_angle + acos(((hipotinuse ** 2 + j ** 2 - 2 * hipotinuse * j * cos(0.25 * pi)) + hipotinuse ** 2 - j ** 2) / (2 * sqrt(hipotinuse ** 2 + j ** 2 - 2 * hipotinuse * j * cos(0.25 * pi)) * hipotinuse)) / pi, 0)
         sin_a = sin(angle * pi)
         cos_a = cos(angle * pi)
         if sin_a == 0:
@@ -133,10 +135,9 @@ def raycast(direction, map_arr, step, location, length, shift):
             y_vert += dy
             depth_vert += delta_depth
         if depth_vert < depth_hor:
-            hit.append([angle, depth_vert])
+            hit.append([angle, depth_vert * cos(rad_ch(rad_ch(direction - angle, 0), 0) * pi)])
         else:
-            hit.append([angle, depth_hor])
-        angle = rad_ch(angle, step)
+            hit.append([angle, depth_hor * cos(rad_ch(rad_ch(direction - angle, 0), 0) * pi)])
     return(hit)
 
 def line(dist, h, i, screen, scale):
@@ -175,7 +176,8 @@ def line(dist, h, i, screen, scale):
     if end > h:
         end = h - 1
     if dist <=20:
-        line_color = (200-dist*10, 200-dist*10, 200-dist*10)
+#        line_color = (200-dist*10, 200-dist*10, 200-dist*10)
+        line_color = (150, 150, 150)
     else:
         line_color = (0, 0, 0)
     pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
@@ -236,13 +238,15 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
     step = 0.0025
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
-    angle = rad_ch(direction, shift)
+    _angle = rad_ch(direction, shift)
+    hipotinuse = sqrt(length * length / 2)
     screen.fill(screen_color)
+    angle = _angle
     for i in range(length):
         for ray in hit:
             if angle == ray[0]:
                 line(ray[1], h, i, screen, scale)
-        angle = rad_ch(angle, step)
+            angle = rad_ch(_angle + acos(((hipotinuse ** 2 + i ** 2 - 2 * hipotinuse * i * cos(0.25 * pi)) + hipotinuse ** 2 - i ** 2) / (2 * sqrt(hipotinuse ** 2 + i ** 2 - 2 * hipotinuse * i * cos(0.25 * pi)) * hipotinuse)) / pi, 0)
     if show_map:
         print_view(map_arr, direction, location, hit, screen)
     if noclip:

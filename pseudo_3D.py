@@ -135,12 +135,12 @@ def raycast(direction, map_arr, step, location, length, shift):
             y_vert += dy
             depth_vert += delta_depth
         if depth_vert < depth_hor:
-            hit.append([angle, depth_vert * cos(rad_ch(rad_ch(direction - angle, 0), 0) * pi)])
+            hit.append([angle, depth_vert])
         else:
-            hit.append([angle, depth_hor * cos(rad_ch(rad_ch(direction - angle, 0), 0) * pi)])
+            hit.append([angle, depth_hor])
     return(hit)
 
-def line(dist, h, i, screen, scale):
+def line(dist, h, i, screen, scale, perp_dist):
     '''
     line
     creates stripes depending on how far away an object is
@@ -166,8 +166,8 @@ def line(dist, h, i, screen, scale):
         a column of the future output
     '''
     if dist != 0:
-        start = h / 2 * (1 - 1 / dist)
-        end = h / 2 * (1 + 1 / dist)
+        start = h / 2 * (1 - 1 / perp_dist)
+        end = h / 2 * (1 + 1 / perp_dist)
     else:
         start = 0
         end = h - 1
@@ -176,8 +176,7 @@ def line(dist, h, i, screen, scale):
     if end > h:
         end = h - 1
     if dist <=20:
-#        line_color = (200-dist*10, 200-dist*10, 200-dist*10)
-        line_color = (150, 150, 150)
+        line_color = (200-dist*10, 200-dist*10, 200-dist*10)
     else:
         line_color = (0, 0, 0)
     pygame.draw.line(screen, line_color, (i * scale, round(start)), (i * scale, round(end)), scale)
@@ -238,15 +237,9 @@ def visual(direction, map_arr, location, length, h, screen, screen_color, scale,
     step = 0.0025
     shift = -0.25 # must be equal to - <desired view angle> / 2
     hit = raycast(direction, map_arr, step, location, length, shift)
-    _angle = rad_ch(direction, shift)
-    hipotinuse = sqrt(length * length / 2)
     screen.fill(screen_color)
-    angle = _angle
     for i in range(length):
-        for ray in hit:
-            if angle == ray[0]:
-                line(ray[1], h, i, screen, scale)
-            angle = rad_ch(_angle + acos(((hipotinuse ** 2 + i ** 2 - 2 * hipotinuse * i * cos(0.25 * pi)) + hipotinuse ** 2 - i ** 2) / (2 * sqrt(hipotinuse ** 2 + i ** 2 - 2 * hipotinuse * i * cos(0.25 * pi)) * hipotinuse)) / pi, 0)
+        line(hit[i][1], h, i, screen, scale, hit[i][1] * cos(rad_ch(rad_ch(direction - hit[i][0], 0), 0) * pi))
     if show_map:
         print_view(map_arr, direction, location, hit, screen)
     if noclip:
